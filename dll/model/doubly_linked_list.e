@@ -1,4 +1,4 @@
-﻿note
+note
 	description: "[
 		A  doubly linked list (DLL) is a linked data structure 
 		that consists of a set of sequentially linked nodes. 
@@ -74,9 +74,9 @@ feature {NONE} -- creation
 		end
 
 feature {NONE, ES_TEST} -- implementation
-	-- Private, but can test implementation, 
+	-- Private, but can test implementation,
 	-- but clients should not be able to access nodes,
-	-- only elements at a node. 
+	-- only elements at a node.
 	-- For Information Hiding.
 	-- Question: so how should a client remove a node,
 	-- without violating Information Hiding?
@@ -88,9 +88,17 @@ feature {NONE, ES_TEST} -- implementation
 		local
 			l_pred, l_succ: NODE[G]
 		do
-		
-			-- To Be Done
-
+			-- Student implementation
+			l_pred := a_node.previous
+			l_succ := a_node.next
+			-- ok due to precondition
+			check attached l_succ as ls
+				and attached l_pred as lp
+			then
+				lp.set_next (ls)
+				ls.set_prev(lp)
+			end
+			count := count - 1
 		ensure
 			decrement_count: count = old count - 1
 			node_removed: not node_exists (a_node)
@@ -268,7 +276,10 @@ feature -- commands
 		require
 			not_empty: not is_empty
 		do
-			-- To Be Done
+			-- Student implementation
+			check attached header.next as h then
+				remove(h)
+			end
 		ensure
 			count_decremented_rf: count = old count - 1
 			first_removed: not node_exists ((old node(1)))
@@ -283,7 +294,10 @@ feature -- commands
 				add_between (e, tp, trailer)
 			end
 		ensure
-			-- To Be Done
+			-- Student implementation
+			increment_count_al: count = old count + 1
+			is_attached: attached trailer.previous as last
+			correct_element_added_al: last.element = e
 		end
 
 	remove_last
@@ -304,8 +318,12 @@ feature -- commands
 		require
 			node_exists: node_exists (n)
 		do
-			-- To Be Done
-			-- use add_between
+			-- Student implementation
+			check attached n as na
+				and attached n.previous as na_pred
+			then
+				add_between(e, na_pred, na)
+			end
 		ensure
 			increment_count_ab: count = old count + 1
 			is_attached: attached n.previous as n_prev
@@ -317,8 +335,12 @@ feature -- commands
 		require
 			node_exists (n)
 		do
-			-- To Be Done
-			-- use add_between
+			-- Student implementation
+			check attached n as na
+				and attached n.next as na_next
+			then
+				add_between(e, na, na_next)
+			end
 		ensure
 			increment_count_aa: count = old count + 1
 			is_attached: attached n.next as n_next
@@ -330,8 +352,12 @@ feature -- commands
 		require
 			valid_index (i)
 		do
-			-- To Be Done
-			-- use add_between
+			-- Student implementation
+			check attached node(i).previous as na
+				and attached node(i) as na_succ
+			then
+				add_between(e, na, na_succ)
+			end
 		ensure
 			increment_count: count = old count + 1
 			element_added_at_i: node(i).element = e
